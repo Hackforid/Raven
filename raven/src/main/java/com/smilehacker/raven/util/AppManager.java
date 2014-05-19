@@ -24,6 +24,19 @@ public class AppManager {
 
     public List<AppInfo> loadApps() {
         List<AppInfo> appInfos = loadAppsFromSys();
+        List<AppInfo> appInDB = loadAppsFromDB();
+
+        for (int i = 0, length = appInfos.size(); i < length; i++) {
+            AppInfo appInfo = appInfos.get(i);
+            for (AppInfo app: appInDB) {
+                if (app.packageName.equals(appInfo.packageName)) {
+                    app.appName = appInfo.appName;
+                    appInfos.set(i, app);
+                }
+            }
+        }
+
+        sortListByEnableState(appInfos);
         return appInfos;
     }
 
@@ -43,6 +56,25 @@ public class AppManager {
 
         return list;
     }
+
+    private List<AppInfo> loadAppsFromDB() {
+        return AppInfo.getAll();
+    }
+
+    private void sortListByEnableState(List<AppInfo> appInfos) {
+        int pos = 0;
+        AppInfo tmpAppInfo = appInfos.get(pos);
+        for (int i = 0, size = appInfos.size(); i < size; i++) {
+            AppInfo appInfo = appInfos.get(i);
+            if (appInfo.enable) {
+                appInfos.set(pos, appInfo);
+                appInfos.set(i, tmpAppInfo);
+                pos++;
+                tmpAppInfo = appInfos.get(pos);
+            }
+        }
+    }
+
 
     private Boolean isLaunchable(PackageInfo packageInfo) {
         return  mPackageManager.getLaunchIntentForPackage(packageInfo.packageName) != null;

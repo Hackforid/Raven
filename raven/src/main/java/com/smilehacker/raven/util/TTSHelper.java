@@ -4,6 +4,8 @@ import android.app.Notification;
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
 
+import com.smilehacker.raven.model.db.AppInfo;
+
 /**
  * Created by kleist on 14-5-19.
  */
@@ -24,13 +26,9 @@ public class TTSHelper {
     }
 
     public void readNotification(Notification notification, String packgaeName) {
-//        NotificationEvent event = new NotificationEvent();
-//        event.notification = notification;
-//        event.packageName = packgaeName;
-//        Intent intent = new Intent(mContext, TTSService.class);
-//        intent.putExtra(Constants.KEY_NOTIFICATION, event);
-//        mContext.startService(intent);
-        mTextToSpeech.speak(notification.tickerText.toString(), TextToSpeech.QUEUE_FLUSH, null);
-
+        AppInfo appInfo = AppInfo.getAppByPackage(packgaeName);
+        if (appInfo != null && appInfo.enable) {
+            mTextToSpeech.speak(notification.tickerText.toString(), TextToSpeech.QUEUE_FLUSH, null);
+        }
     }
 }

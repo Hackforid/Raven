@@ -1,25 +1,20 @@
 package com.smilehacker.raven.activity;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.speech.tts.TextToSpeech;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 
 import com.smilehacker.raven.R;
+import com.smilehacker.raven.adapter.AppGridViewAdapter;
 import com.smilehacker.raven.model.db.AppInfo;
-import com.smilehacker.raven.model.event.NotificationEvent;
 import com.smilehacker.raven.util.AppManager;
-import com.smilehacker.raven.util.DLog;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,6 +22,8 @@ public class MainActivity extends Activity {
 
     private GridView mGvApps;
     private ProgressBar mPbLoading;
+
+    private AppGridViewAdapter mAppGridViewAdapter;
 
 
     @Override
@@ -74,6 +71,9 @@ public class MainActivity extends Activity {
     private void initView() {
         mGvApps = (GridView) findViewById(R.id.gv_apps);
         mPbLoading = (ProgressBar) findViewById(R.id.pb_loading);
+
+        mAppGridViewAdapter = new AppGridViewAdapter(this, new ArrayList<AppInfo>());
+        mGvApps.setAdapter(mAppGridViewAdapter);
     }
 
     private void showApps() {
@@ -95,6 +95,7 @@ public class MainActivity extends Activity {
             @Override
             protected void onPostExecute(List<AppInfo> appInfos) {
                 super.onPostExecute(appInfos);
+                mAppGridViewAdapter.flush(appInfos);
                 mPbLoading.setVisibility(View.GONE);
                 mGvApps.setVisibility(View.VISIBLE);
             }
