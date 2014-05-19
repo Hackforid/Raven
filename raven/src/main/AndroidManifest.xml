@@ -3,6 +3,7 @@
     package="com.smilehacker.raven" >
 
     <application
+        android:name=".app.MyApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"

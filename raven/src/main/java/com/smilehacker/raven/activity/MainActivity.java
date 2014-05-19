@@ -11,68 +11,45 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.GridView;
+import android.widget.ProgressBar;
 
 import com.smilehacker.raven.R;
+import com.smilehacker.raven.model.db.AppInfo;
 import com.smilehacker.raven.model.event.NotificationEvent;
+import com.smilehacker.raven.util.AppManager;
 import com.smilehacker.raven.util.DLog;
 
-import de.greenrobot.event.EventBus;
+import java.util.List;
 
 
 public class MainActivity extends Activity {
 
-    private Button mSettingButton;
+    private GridView mGvApps;
+    private ProgressBar mPbLoading;
 
-    private EventBus mEventBus;
-    private TextToSpeech mTTS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mEventBus = EventBus.getDefault();
-        mEventBus.register(this);
 
-        mSettingButton = (Button) findViewById(R.id.btn_setting);
+//        mSettingButton = (Button) findViewById(R.id.btn_setting);
+//
+//        mSettingButton.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View view) {
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+//                    startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"));
+//                } else {
+//                    startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+//                }
+//            }
+//        });
 
-        mSettingButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"));
-                } else {
-                    startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
-                }
-            }
-        });
-
-    }
-
-    private void initTTS() {
-        mTTS = new TextToSpeech(MainActivity.this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status != TextToSpeech.ERROR) {
-                    //mTTS.setLanguage(Locale.CHINA);
-                }
-            }
-        });
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mEventBus.unregister(this);
-    }
-
-
-    @SuppressWarnings("UnusedDeclaration")
-    public void onEvent(NotificationEvent event) {
-        DLog.i("receive notification");
-        DLog.i("from: " + event.packageName);
-        DLog.i("ticker text: " + event.notification.tickerText);
+        initView();
+        showApps();
     }
 
     @Override
@@ -94,15 +71,36 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void speech(final String text) {
-        new AsyncTask<Void, Void, Void>() {
+    private void initView() {
+        mGvApps = (GridView) findViewById(R.id.gv_apps);
+        mPbLoading = (ProgressBar) findViewById(R.id.pb_loading);
+    }
+
+    private void showApps() {
+        AsyncTask<Void, Void, List<AppInfo>> loadAppTask = new AsyncTask<Void, Void, List<AppInfo>>() {
 
             @Override
-            protected Void doInBackground(Void... voids) {
-                mTTS.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-                return null;
+            protected void onPreExecute() {
+                super.onPreExecute();
+                mGvApps.setVisibility(View.GONE);
+                mPbLoading.setVisibility(View.VISIBLE);
             }
-        }.execute();
+
+            @Override
+            protected List<AppInfo> doInBackground(Void... voids) {
+                AppManager appManager = new AppManager(MainActivity.this);
+                return appManager.loadApps();
+            }
+
+            @Override
+            protected void onPostExecute(List<AppInfo> appInfos) {
+                super.onPostExecute(appInfos);
+                mPbLoading.setVisibility(View.GONE);
+                mGvApps.setVisibility(View.VISIBLE);
+            }
+        };
+
+        loadAppTask.execute();
     }
 
 }
