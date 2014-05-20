@@ -31,4 +31,10 @@ public class TTSHelper {
             mTextToSpeech.speak(notification.tickerText.toString(), TextToSpeech.QUEUE_FLUSH, null);
         }
     }
+
+    public void releaseTTS() {
+        mTextToSpeech.stop();
+        mTextToSpeech.shutdown();
+    }
+
 }

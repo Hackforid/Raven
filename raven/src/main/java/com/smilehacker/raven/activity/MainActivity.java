@@ -1,18 +1,22 @@
 package com.smilehacker.raven.activity;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 
 import com.smilehacker.raven.R;
 import com.smilehacker.raven.adapter.AppGridViewAdapter;
 import com.smilehacker.raven.model.db.AppInfo;
 import com.smilehacker.raven.util.AppManager;
+import com.smilehacker.raven.util.SharedPreferenceManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +26,8 @@ public class MainActivity extends Activity {
 
     private GridView mGvApps;
     private ProgressBar mPbLoading;
+    private Switch mSwEnable;
+    private SharedPreferenceManager mSharedPreferenceManager;
 
     private AppGridViewAdapter mAppGridViewAdapter;
 
@@ -45,7 +51,10 @@ public class MainActivity extends Activity {
 //            }
 //        });
 
+        mSharedPreferenceManager = new SharedPreferenceManager(this);
+
         initView();
+        initActionBar();
         showApps();
     }
 
@@ -74,6 +83,20 @@ public class MainActivity extends Activity {
 
         mAppGridViewAdapter = new AppGridViewAdapter(this, new ArrayList<AppInfo>());
         mGvApps.setAdapter(mAppGridViewAdapter);
+    }
+
+    private void initActionBar() {
+        ActionBar actionBar = getActionBar();
+        actionBar.setCustomView(R.layout.v_home_actionbar);
+        actionBar.setDisplayShowCustomEnabled(true);
+        mSwEnable = (Switch) actionBar.getCustomView().findViewById(R.id.sw_enable);
+        mSwEnable.setChecked(mSharedPreferenceManager.getEnable());
+        mSwEnable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                mSharedPreferenceManager.setEnable(b);
+            }
+        });
     }
 
     private void showApps() {

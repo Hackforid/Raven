@@ -7,4 +7,7 @@
 
     <string name="notification_description">Listen Notifications</string>
 
+    <string name="switch_enable_on">启动</string>
+    <string name="switch_enable_off">关闭</string>
+
 </resources>

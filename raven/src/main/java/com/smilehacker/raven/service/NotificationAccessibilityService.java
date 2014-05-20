@@ -6,6 +6,7 @@ import android.app.Notification;
 import android.os.Parcelable;
 import android.view.accessibility.AccessibilityEvent;
 
+import com.smilehacker.raven.util.SharedPreferenceManager;
 import com.smilehacker.raven.util.TTSHelper;
 
 /**
@@ -14,11 +15,13 @@ import com.smilehacker.raven.util.TTSHelper;
 public class NotificationAccessibilityService extends AccessibilityService {
 
     private TTSHelper mTTSHelper;
+    private SharedPreferenceManager mSharedPreferenceManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
         mTTSHelper = new TTSHelper(this);
+        mSharedPreferenceManager = new SharedPreferenceManager(this);
     }
 
     protected void onServiceConnected() {
@@ -30,6 +33,10 @@ public class NotificationAccessibilityService extends AccessibilityService {
     }
 
     public void onAccessibilityEvent(AccessibilityEvent e) {
+        if (!mSharedPreferenceManager.getEnable()) {
+            return;
+        }
+
         if (e.getEventType() == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
             Parcelable data = e.getParcelableData();
             if (data instanceof Notification) {
@@ -41,5 +48,11 @@ public class NotificationAccessibilityService extends AccessibilityService {
     @Override
     public void onInterrupt() {
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mTTSHelper.releaseTTS();
     }
 }
