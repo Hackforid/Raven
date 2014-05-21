@@ -13,6 +13,22 @@
 
     <!-- preference -->
     <string name="setting_title_service">通知服务</string>
-    <string name="setting_summary_service">监视系统通知的后台服务 请务必开启</string>
+    <string name="setting_summary_service_diable">通知监听服务未开启</string>
+    <string name="setting_summary_service_enable">通知监听服务已开启</string>
     <string name="setting_key_service">key_setting_service</string>
+
+    <!-- voice -->
+    <string name="speech_text">来自%1$s的通知,%2$s</string>
+    <string name="speech_text_without_appname">%1$s</string>
+
+    <!-- dialog -->
+    <string name="dialog_enable_service_title">通知监听服务未开启</string>
+    <string name="dialog_enable_service_msg">请设置并启动该服务 否则Raven无法正常运行</string>
+    <string name="dialog_enable_service_confirm">设置监听服务</string>
+    <string name="dialog_enable_service_cancel">取消</string>
+
+    <string name="dialog_set_tts_title">TTS错误</string>
+    <string name="dialog_set_tts_msg">您的文字转语音服务不支持当前语言 请安装相应TTS并开启支持</string>
+    <string name="dialog_set_tts_confirm">去设置</string>
+    <string name="dialog_set_tts_cancel">取消</string>
 </resources>

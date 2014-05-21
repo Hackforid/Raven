@@ -8,13 +8,18 @@ import android.preference.PreferenceActivity;
 import android.provider.Settings;
 
 import com.smilehacker.raven.R;
+import com.smilehacker.raven.util.NotificationServiceHelper;
 
 /**
  * Created by kleist on 14-5-21.
  */
 public class SettingActivity extends PreferenceActivity {
 
-    private Preference mPrefSetting;
+    private final static int REQUEST_CODE_SERVICE = 100;
+
+    private Preference mPrefService;
+
+    private NotificationServiceHelper mNotificationServiceHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,22 +27,45 @@ public class SettingActivity extends PreferenceActivity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
         addPreferencesFromResource(R.xml.setting_preference);
 
+        mNotificationServiceHelper = new NotificationServiceHelper(this);
+
         initPreference();
     }
 
     private void initPreference() {
-        mPrefSetting = findPreference(getString(R.string.setting_key_service));
+        mPrefService = findPreference(getString(R.string.setting_key_service));
 
-        mPrefSetting.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        setServicePreference();
+    }
+
+    private void setServicePreference() {
+        setServicePreferenceSummary();
+        mPrefService.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"));
+                    startActivityForResult(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"), REQUEST_CODE_SERVICE);
                 } else {
-                    startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+                    startActivityForResult(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS), REQUEST_CODE_SERVICE);
                 }
                 return true;
             }
         });
+    }
+
+    private void setServicePreferenceSummary() {
+        if (mNotificationServiceHelper.isNotificationServiceEnable()) {
+            mPrefService.setSummary(R.string.setting_summary_service_enable);
+        } else {
+            mPrefService.setSummary(R.string.setting_summary_service_diable);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_SERVICE) {
+            setServicePreferenceSummary();
+        }
     }
 }

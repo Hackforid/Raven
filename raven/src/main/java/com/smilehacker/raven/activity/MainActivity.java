@@ -2,9 +2,14 @@ package com.smilehacker.raven.activity;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.speech.tts.TextToSpeech;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,7 +22,10 @@ import com.smilehacker.raven.R;
 import com.smilehacker.raven.adapter.AppGridViewAdapter;
 import com.smilehacker.raven.model.db.AppInfo;
 import com.smilehacker.raven.util.AppManager;
+import com.smilehacker.raven.util.DLog;
+import com.smilehacker.raven.util.NotificationServiceHelper;
 import com.smilehacker.raven.util.SharedPreferenceManager;
+import com.smilehacker.raven.util.TTSHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +50,7 @@ public class MainActivity extends Activity {
 
         initView();
         initActionBar();
-        showApps();
+        checkService();
     }
 
     @Override
@@ -82,6 +90,84 @@ public class MainActivity extends Activity {
                 mSharedPreferenceManager.setEnable(b);
             }
         });
+    }
+
+    private void checkService() {
+        NotificationServiceHelper helper = new NotificationServiceHelper(this);
+        if (helper.isNotificationServiceEnable()) {
+            checkTTS();
+        } else {
+            showEnableServiceDialog();
+        }
+    }
+
+    private void checkTTS() {
+        final TTSHelper helper = new TTSHelper(this);
+        helper.checkTTS(new TTSHelper.OnTTSCheckedListener() {
+            @Override
+            public void onTTSChecked(Boolean enable) {
+                if (enable) {
+                    showApps();
+                } else {
+                    showSetTTSDialog();
+                }
+                helper.releaseTTS();
+            }
+        });
+    }
+
+    private void showSetTTSDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.dialog_set_tts_title);
+        builder.setMessage(R.string.dialog_set_tts_msg);
+        builder.setPositiveButton(R.string.dialog_set_tts_confirm, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+                Intent intent = new Intent();
+                intent.setAction("com.android.settings.TTS_SETTINGS");
+                startActivity(intent);
+                showApps();
+            }
+        });
+        builder.setNegativeButton(R.string.dialog_set_tts_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+                showApps();
+            }
+        });
+        builder.create().show();
+    }
+
+    private void showEnableServiceDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.dialog_enable_service_title);
+        builder.setMessage(R.string.dialog_enable_service_msg);
+        builder.setPositiveButton(R.string.dialog_enable_service_confirm, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"));
+                } else {
+                    startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+                }
+
+                dialogInterface.dismiss();
+                checkTTS();
+            }
+        });
+
+        builder.setNegativeButton(R.string.dialog_enable_service_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+                checkTTS();
+            }
+        });
+
+        builder.create().show();
     }
 
     private void showApps() {
