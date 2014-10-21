@@ -11,6 +11,8 @@ import android.speech.tts.UtteranceProgressListener;
 import com.smilehacker.raven.R;
 import com.smilehacker.raven.model.db.AppInfo;
 
+import java.util.HashMap;
+
 /**
  * Created by kleist on 14-5-19.
  */
@@ -18,25 +20,43 @@ public class TTSHelper {
 
     private Context mContext;
     private TextToSpeech mTextToSpeech;
+    private static TTSHelper mInstance;
 
-    public TTSHelper(Context context) {
+    public static TTSHelper getInstance(Context context) {
+        if (mInstance == null) {
+            synchronized (TTSHelper.class) {
+                if (mInstance == null) {
+                    mInstance = new TTSHelper(context.getApplicationContext());
+                }
+            }
+        }
+
+        return mInstance;
+    }
+
+    private TTSHelper(Context context) {
         mContext = context;
     }
 
     public void readNotification(final Notification notification, final String packgaeName) {
+        AppInfo appInfo = AppInfo.getAppByPackage(packgaeName);
+        if (appInfo != null && appInfo.enable) {
+            String speechText = makeText(packgaeName, notification.tickerText.toString());
+            readByTTS(speechText);
+        }
+
+    }
+
+    private void readByTTS(final String text) {
+        releaseTTS();
         mTextToSpeech = new TextToSpeech(mContext, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int i) {
                 if (i == TextToSpeech.SUCCESS) {
                     setTTSCompleteAction();
-
-                    AppInfo appInfo = AppInfo.getAppByPackage(packgaeName);
-                    if (appInfo != null && appInfo.enable) {
-
-                        String speechText = makeText(packgaeName, notification.tickerText.toString());
-                        mTextToSpeech.speak(speechText, TextToSpeech.QUEUE_FLUSH, null);
-                    }
-
+                    HashMap<String, String> map = new HashMap<String, String>();
+                    map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "unique");
+                    mTextToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, map);
                 }
             }
         });
@@ -58,7 +78,8 @@ public class TTSHelper {
 
                 @Override
                 public void onError(String s) {
-
+                    DLog.i("error");
+                    releaseTTS();
                 }
             });
         } else {
@@ -74,8 +95,11 @@ public class TTSHelper {
     }
 
     public void releaseTTS() {
-        mTextToSpeech.stop();
-        mTextToSpeech.shutdown();
+        if (mTextToSpeech != null) {
+            mTextToSpeech.stop();
+            mTextToSpeech.shutdown();
+            mTextToSpeech = null;
+        }
     }
 
     private String makeText(String packageName, String text) {
@@ -114,6 +138,7 @@ public class TTSHelper {
                         listener.onTTSChecked(true);
                     }
                 }
+                releaseTTS();
             }
         });
     }

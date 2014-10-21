@@ -20,7 +20,7 @@ public class NotificationAccessibilityService extends AccessibilityService {
     @Override
     public void onCreate() {
         super.onCreate();
-        mTTSHelper = new TTSHelper(this);
+        mTTSHelper = TTSHelper.getInstance(this);
         mSharedPreferenceManager = new SharedPreferenceManager(this);
     }
 

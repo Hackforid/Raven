@@ -7,6 +7,8 @@ import android.content.pm.PackageManager;
 import com.smilehacker.raven.model.db.AppInfo;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -61,8 +63,16 @@ public class AppManager {
         return AppInfo.getAll();
     }
 
+
+
     private void sortListByEnableState(List<AppInfo> appInfos) {
         int pos = 0;
+        Collections.sort(appInfos, new Comparator<AppInfo>() {
+            @Override
+            public int compare(AppInfo lhs, AppInfo rhs) {
+                return lhs.appName.compareTo(rhs.appName);
+            }
+        });
         AppInfo tmpAppInfo = appInfos.get(pos);
         for (int i = 0, size = appInfos.size(); i < size; i++) {
             AppInfo appInfo = appInfos.get(i);

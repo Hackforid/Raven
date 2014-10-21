@@ -19,6 +19,7 @@
         </activity>
         <activity
             android:name=".activity.SettingActivity"
+            android:theme="@style/AppTheme.Preference"
             android:label="@string/setting" >
         </activity>
 
@@ -43,8 +44,6 @@
             <meta-data
                 android:name="android.accessibilityservice"
                 android:resource="@xml/notification_accessibility_service"/>
-        </service>
-        <service android:name=".service.TTSService">
         </service>
 
     </application>

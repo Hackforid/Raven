@@ -1,7 +1,5 @@
 package com.smilehacker.raven.activity;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,7 +7,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.speech.tts.TextToSpeech;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends ActionBarActivity {
 
     private GridView mGvApps;
     private ProgressBar mPbLoading;
@@ -51,6 +50,11 @@ public class MainActivity extends Activity {
         initView();
         initActionBar();
         checkService();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     @Override
@@ -79,7 +83,7 @@ public class MainActivity extends Activity {
     }
 
     private void initActionBar() {
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setCustomView(R.layout.v_home_actionbar);
         actionBar.setDisplayShowCustomEnabled(true);
         mSwEnable = (Switch) actionBar.getCustomView().findViewById(R.id.sw_enable);
@@ -102,7 +106,7 @@ public class MainActivity extends Activity {
     }
 
     private void checkTTS() {
-        final TTSHelper helper = new TTSHelper(this);
+        TTSHelper helper = TTSHelper.getInstance(this);
         helper.checkTTS(new TTSHelper.OnTTSCheckedListener() {
             @Override
             public void onTTSChecked(Boolean enable) {
@@ -111,7 +115,6 @@ public class MainActivity extends Activity {
                 } else {
                     showSetTTSDialog();
                 }
-                helper.releaseTTS();
             }
         });
     }

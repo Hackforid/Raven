@@ -12,6 +12,11 @@ import android.widget.ImageView;
 
 import com.smilehacker.raven.R;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by kleist on 14-5-19.
  */
@@ -21,9 +26,12 @@ public class AsyncIconLoader {
     private PackageManager mPackageManager;
     private Context mContext;
 
+    private Executor mExecutor;
+
     public AsyncIconLoader(Context context) {
         mPackageManager = context.getPackageManager();
         mContext = context;
+        mExecutor = new ThreadPoolExecutor(4, 128, 10, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>());
         initCache();
     }
 
@@ -61,7 +69,7 @@ public class AsyncIconLoader {
 
     private void asyncLoadIcon(String packageName, final ImageView imageView) {
         AsyncIconLoadTask task = new AsyncIconLoadTask(packageName, imageView);
-        task.execute();
+        task.executeOnExecutor(mExecutor);
     }
 
     private Bitmap getIcon(String packageName) {
