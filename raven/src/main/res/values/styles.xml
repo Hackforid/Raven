@@ -1,8 +1,18 @@
 <resources>
 
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light"/>
+    <style name="AppBaseTheme" parent="Theme.AppCompat.Light">
+    </style>
+
+    <style name="AppBaseTheme.Compact" parent="AppBaseTheme">
+    </style>
 
     <style name="AppTheme.Preference" parent="android:Theme.Holo.Light"/>
+
+    <style name="AppTheme" parent="AppBaseTheme.Compact">
+        <item name="colorPrimary">@color/primary_red</item>
+        <item name="colorPrimaryDark">@color/primary_dark_red</item>
+    </style>
+
 
 </resources>

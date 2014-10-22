@@ -2,4 +2,9 @@
 <resources>
     <color name="holo_light_gray">#FFDDDDDD</color>
     <color name="light_gray_background">#33C0C0C0</color>
+
+    <color name="primary_red">#e51c23</color>
+    <color name="primary_dark_red">#e51c23</color>
+
+    <color name="content_white">#fafafa</color>
 </resources>
