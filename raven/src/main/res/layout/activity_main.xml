@@ -1,9 +1,16 @@
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.smilehacker.raven.activity.MainActivity"
     >
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/actionbar"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:minHeight="56dp"
+        android:background="@color/primary_red"
+        />
 
     <GridView
         android:id="@+id/gv_apps"
@@ -14,10 +21,10 @@
         android:verticalSpacing="10dp"
         android:stretchMode="columnWidth"
         android:visibility="gone"
-        android:background="@color/light_gray_background"
         android:scrollbarStyle="outsideOverlay"
         android:padding="10dp"
         android:clipToPadding="false"
+        android:layout_below="@id/actionbar"
         >
     </GridView>
 
@@ -25,6 +32,6 @@
         android:id="@+id/pb_loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_centerInParent="true"
         />
-</merge>
+</RelativeLayout>

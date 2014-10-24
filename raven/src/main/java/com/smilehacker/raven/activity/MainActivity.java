@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,11 +18,11 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.smilehacker.raven.R;
 import com.smilehacker.raven.adapter.AppGridViewAdapter;
 import com.smilehacker.raven.model.db.AppInfo;
 import com.smilehacker.raven.util.AppManager;
-import com.smilehacker.raven.util.DLog;
 import com.smilehacker.raven.util.NotificationServiceHelper;
 import com.smilehacker.raven.util.SharedPreferenceManager;
 import com.smilehacker.raven.util.TTSHelper;
@@ -29,11 +30,19 @@ import com.smilehacker.raven.util.TTSHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 
 public class MainActivity extends ActionBarActivity {
 
-    private GridView mGvApps;
-    private ProgressBar mPbLoading;
+    @InjectView(R.id.actionbar)
+    Toolbar mActionbar;
+    @InjectView(R.id.gv_apps)
+    GridView mGvApps;
+    @InjectView(R.id.pb_loading)
+    ProgressBar mPbLoading;
+
     private Switch mSwEnable;
     private SharedPreferenceManager mSharedPreferenceManager;
 
@@ -44,7 +53,15 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.inject(this);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            SystemBarTintManager tintManager = new SystemBarTintManager(this);
+            tintManager.setStatusBarTintEnabled(true);
+            tintManager.setStatusBarTintColor(getResources().getColor(R.color.primary_red));
+        }
+
+        setSupportActionBar(mActionbar);
         mSharedPreferenceManager = new SharedPreferenceManager(this);
 
         initView();
@@ -75,18 +92,19 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void initView() {
-        mGvApps = (GridView) findViewById(R.id.gv_apps);
-        mPbLoading = (ProgressBar) findViewById(R.id.pb_loading);
-
         mAppGridViewAdapter = new AppGridViewAdapter(this, new ArrayList<AppInfo>());
         mGvApps.setAdapter(mAppGridViewAdapter);
     }
 
     private void initActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setCustomView(R.layout.v_home_actionbar);
-        actionBar.setDisplayShowCustomEnabled(true);
-        mSwEnable = (Switch) actionBar.getCustomView().findViewById(R.id.sw_enable);
+        mActionbar.setTitle("Raven");
+        mSwEnable = new Switch(this);
+
+
+//        ActionBar actionBar = getSupportActionBar();
+//        actionBar.setCustomView(R.layout.v_home_actionbar);
+//        actionBar.setDisplayShowCustomEnabled(true);
+//        mSwEnable = (Switch) actionBar.getCustomView().findViewById(R.id.sw_enable);
         mSwEnable.setChecked(mSharedPreferenceManager.getEnable());
         mSwEnable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -94,6 +112,8 @@ public class MainActivity extends ActionBarActivity {
                 mSharedPreferenceManager.setEnable(b);
             }
         });
+
+        mActionbar.addView(mSwEnable);
     }
 
     private void checkService() {
