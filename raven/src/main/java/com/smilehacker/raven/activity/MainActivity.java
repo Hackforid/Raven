@@ -10,9 +10,11 @@ import android.provider.Settings;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.ProgressBar;
@@ -99,12 +101,10 @@ public class MainActivity extends ActionBarActivity {
     private void initActionBar() {
         mActionbar.setTitle("Raven");
         mSwEnable = new Switch(this);
+        Toolbar.LayoutParams lp = new Toolbar.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.gravity = Gravity.RIGHT;
+        mSwEnable.setLayoutParams(lp);
 
-
-//        ActionBar actionBar = getSupportActionBar();
-//        actionBar.setCustomView(R.layout.v_home_actionbar);
-//        actionBar.setDisplayShowCustomEnabled(true);
-//        mSwEnable = (Switch) actionBar.getCustomView().findViewById(R.id.sw_enable);
         mSwEnable.setChecked(mSharedPreferenceManager.getEnable());
         mSwEnable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
