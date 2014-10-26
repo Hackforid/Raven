@@ -1,5 +1,6 @@
 package com.smilehacker.raven.activity;
 
+import android.animation.Animator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,7 +16,10 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.ProgressBar;
@@ -60,7 +65,7 @@ public class MainActivity extends ActionBarActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             SystemBarTintManager tintManager = new SystemBarTintManager(this);
             tintManager.setStatusBarTintEnabled(true);
-            tintManager.setStatusBarTintColor(getResources().getColor(R.color.primary_red));
+            tintManager.setStatusBarTintColor(getResources().getColor(R.color.primary_dark_red));
         }
 
         setSupportActionBar(mActionbar);
@@ -96,6 +101,11 @@ public class MainActivity extends ActionBarActivity {
     private void initView() {
         mAppGridViewAdapter = new AppGridViewAdapter(this, new ArrayList<AppInfo>());
         mGvApps.setAdapter(mAppGridViewAdapter);
+        mGvApps.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            }
+        });
     }
 
     private void initActionBar() {

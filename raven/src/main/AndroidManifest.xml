@@ -22,6 +22,7 @@
             android:theme="@style/AppTheme.Preference"
             android:label="@string/setting" >
         </activity>
+        <activity android:name=".activity.AppDetailActivity"/>
 
         <service
             android:name=".service.NLService"

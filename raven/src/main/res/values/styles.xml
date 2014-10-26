@@ -12,6 +12,7 @@
     <style name="AppTheme" parent="AppBaseTheme.Compact">
         <item name="colorPrimary">@color/primary_red</item>
         <item name="colorPrimaryDark">@color/primary_dark_red</item>
+        <item name="android:textColorPrimary">@color/text_color_prime</item>
     </style>
 
 

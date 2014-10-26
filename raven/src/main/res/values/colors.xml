@@ -5,6 +5,7 @@
 
     <color name="primary_red">#e51c23</color>
     <color name="primary_dark_red">#e51c23</color>
+    <color name="text_color_prime">#DDFFFFFF</color>
 
     <color name="content_white">#fafafa</color>
 </resources>

@@ -1,6 +1,9 @@
 package com.smilehacker.raven.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +14,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.smilehacker.raven.R;
+import com.smilehacker.raven.activity.AppDetailActivity;
+import com.smilehacker.raven.activity.MainActivity;
 import com.smilehacker.raven.model.db.AppInfo;
 import com.smilehacker.raven.util.image.AsyncIconLoader;
 
@@ -67,12 +72,18 @@ public class AppGridViewAdapter extends BaseAdapter {
         holder.cbEnable.setChecked(appInfo.enable);
         mAsyncIconLoader.loadBitmap(appInfo.packageName, holder.ivIcon);
 
-        holder.rlCard.setOnClickListener(new View.OnClickListener() {
+        holder.cbEnable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 appInfo.enable = !appInfo.enable;
                 holder.cbEnable.setChecked(appInfo.enable);
                 appInfo.save();
+            }
+        });
+
+        holder.rlCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
             }
         });
 
